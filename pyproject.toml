@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "music-link-conv"
-version = "0.0.1b1"
+version = "0.0.1b2"
 description = "Library for converting platform link x to platform link y"
 authors = ["An0nimia <an0nimia@protonmail.com>"]
 readme = "README.md"
