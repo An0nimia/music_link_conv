@@ -13,34 +13,57 @@ class Music_Link_Conv:
 
 		self.__spotify_client_id = spotify_client_id
 		self.__spotify_client_secret = spotify_client_secret
-		self.__api_deezer = API_Deezer()
-		self.__api_spotify = API_Spotify(self.__spotify_client_id, self.__spotify_client_secret)
+		self.__api_dee = API_Deezer()
+		self.__api_spo = API_Spotify(self.__spotify_client_id, self.__spotify_client_secret)
 
 
-	def conv_spo_track_2_deezer_track(self, id_track: str):
-		spotify_data = self.__api_spotify.get_track(id_track)
+	def conv_spo_track_2_dee_track(self, id_track: str) -> str | None:
+		spotify_data = self.__api_spo.get_track(id_track)
 		isrc = spotify_data.external_ids.isrc
 
 		if not isrc:
 			return
 
 		try:
-			deezer_data = self.__api_deezer.get_track_by_isrc(isrc)
+			deezer_data = self.__api_dee.get_track_by_isrc(isrc)
 		except Deezer_Error_Data_404:
 			return
 
 		return deezer_data.link
 
-	def conv_spo_album_2_deezer_album(self, id_album: str):
-		spotify_data = self.__api_spotify.get_album(id_album)
+	def conv_spo_album_2_dee_album(self, id_album: str) -> str | None:
+		spotify_data = self.__api_spo.get_album(id_album)
 		upc = spotify_data.external_ids.upc
 
 		if not upc:
 			return
 
 		try:
-			deezer_data = self.__api_deezer.get_album_by_upc(upc)
+			deezer_data = self.__api_dee.get_album_by_upc(upc)
 		except Deezer_Error_Data_404:
+			return
+
+		return deezer_data.link
+
+	def conv_spo_artist_2_dee_artist(self, id_artist: str) -> str | None:
+		spotify_data = self.__api_spo.get_artist(id_artist)
+		artist = spotify_data.name
+		deezer_data = None
+
+		if artist.find(" ") != -1:
+			search = self.__api_dee.search(artist)
+
+			for found in search.results:
+				if found.artist.name == artist:
+					deezer_data = found.artist
+					break
+		else:
+			try:
+				deezer_data = self.__api_dee.get_artist(artist)
+			except Deezer_Error_Data_404:
+				return
+
+		if not deezer_data:
 			return
 
 		return deezer_data.link
