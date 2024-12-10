@@ -17,6 +17,13 @@ runtimes:
 # This is the section where you manage your linters. (https://docs.trunk.io/check/configuration)
 lint:
     enabled:
+        - pre-commit-hooks@5.0.0:
+              commands:
+                  - end-of-file-fixer
+                  - check-symlinks
+                  - check-toml
+                  - detect-private-key
+                  - trailing-whitespace
         - gitleaks@8.21.2
         - trufflehog-git@3.85.0
         - actionlint@1.7.4

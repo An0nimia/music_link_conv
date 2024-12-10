@@ -34,6 +34,6 @@ class Test_Types_Serialization(TestCase):
 		result = ('https://www.deezer.com/artist/10091060', 'https://www.deezer.com/artist/14081395')
 
 		for i, link in enumerate(links):
-			link = self.__API.conv_spo_artist_2_dee_artist(link)
+			link_dee = self.__API.conv_spo_artist_2_dee_artist(link)
 
-			assert link == result[i] # trunk-ignore(bandit/B101)
+			assert link_dee == result[i] # trunk-ignore(bandit/B101)
