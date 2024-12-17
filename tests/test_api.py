@@ -37,3 +37,13 @@ class Test_Types_Serialization(TestCase):
 			link_dee = self.__API.conv_spo_artist_2_dee_artist(link)
 
 			assert link_dee == result[i] # trunk-ignore(bandit/B101)
+
+
+	def test_spo_playlist_2_dee_tracks(self):
+		links = ('37i9dQZF1DX7e8TjkFNKWH',)
+		result = (150,)
+
+		for i, link in enumerate(links):
+			link_dee = self.__API.conv_spo_playlist_2_dee_tracks(link)
+
+			assert len(link_dee) == result[i] # trunk-ignore(bandit/B101)

@@ -31,6 +31,7 @@ class Music_Link_Conv:
 
 		return deezer_data.link
 
+
 	def conv_spo_album_2_dee_album(self, id_album: str) -> str | None:
 		spotify_data = self.__api_spo.get_album(id_album)
 		upc = spotify_data.external_ids.upc
@@ -44,6 +45,7 @@ class Music_Link_Conv:
 			return
 
 		return deezer_data.link
+
 
 	def conv_spo_artist_2_dee_artist(self, id_artist: str) -> str | None:
 		spotify_data = self.__api_spo.get_artist(id_artist)
@@ -67,3 +69,23 @@ class Music_Link_Conv:
 			return
 
 		return deezer_data.link
+
+
+	def conv_spo_playlist_2_dee_tracks(self, id_playlist: str) -> list[str]:
+		spotify_data = self.__api_spo.get_playlist(id_playlist)
+		tracks: list[str] = []
+		is_next = spotify_data.tracks
+
+		while is_next:
+			for data in is_next.items:
+				c_isrc = data.track.external_ids.isrc
+
+				try:
+					c_dee_track = self.__api_dee.get_track_by_isrc(c_isrc)
+					tracks.append(c_dee_track.link)
+				except Deezer_Error_Data_404:
+					pass
+
+			is_next = is_next.get_next()
+
+		return tracks
