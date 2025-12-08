@@ -1,10 +1,17 @@
+from logging import getLogger
+
 from api_deezer import API as API_Deezer
 from api_deezer.exceptions.data import Error_Data_404 as Deezer_Error_Data_404
 
 from api_spotify import API as API_Spotify
 
+from .aliases import spo_playlist_2_dee_tracks
+
 
 class Music_Link_Conv:
+	logger = getLogger('MUSIC_LINK_CONV')
+
+
 	def __init__(
 		self,
 		spotify_client_id: str,
@@ -52,39 +59,35 @@ class Music_Link_Conv:
 		artist = spotify_data.name
 		deezer_data = None
 
-		if artist.find(" ") != -1:
-			search = self.__api_dee.search(artist)
+		search = self.__api_dee.search(f'artist:\'{artist}\'')
 
-			for found in search.results:
-				if found.artist.name == artist:
-					deezer_data = found.artist
-					break
-		else:
-			try:
-				deezer_data = self.__api_dee.get_artist(artist)
-			except Deezer_Error_Data_404:
-				return
-
-		if not deezer_data:
-			return
-
-		return deezer_data.link
+		for found in search.results:
+			if found.artist.name == artist:
+				deezer_data = found.artist
+				return deezer_data.link
 
 
-	def conv_spo_playlist_2_dee_tracks(self, id_playlist: str) -> list[str]:
+	def conv_spo_playlist_2_dee_tracks(self, id_playlist: str) -> spo_playlist_2_dee_tracks:
 		spotify_data = self.__api_spo.get_playlist(id_playlist)
-		tracks: list[str] = []
+		tracks: spo_playlist_2_dee_tracks = []
 		is_next = spotify_data.tracks
 
 		while is_next:
 			for data in is_next.items:
+				deezer_link = None
 				c_isrc = data.track.external_ids.isrc
 
-				try:
-					c_dee_track = self.__api_dee.get_track_by_isrc(c_isrc)
-					tracks.append(c_dee_track.link)
-				except Deezer_Error_Data_404:
-					pass
+				if c_isrc is not None:
+					try:
+						c_dee_track = self.__api_dee.get_track_by_isrc(c_isrc)
+						deezer_link = c_dee_track.link
+					except Deezer_Error_Data_404:
+						pass
+
+				tracks.append(
+					(data.track, deezer_link)
+				)
+
 
 			is_next = is_next.get_next()
 

@@ -30,8 +30,8 @@ class Test_Types_Serialization(TestCase):
 
 
 	def test_spo_artist_2_dee_artist(self):
-		links = ('2hhLQDmEJqObRlCHWbyeQF', '1U0dn9EFyhTfKS4xvFrUSR')
-		result = ('https://www.deezer.com/artist/10091060', 'https://www.deezer.com/artist/14081395')
+		links = ('2hhLQDmEJqObRlCHWbyeQF', '1U0dn9EFyhTfKS4xvFrUSR', '1iCEfUWP2df4VcsaJF6FjD')
+		result = ('https://www.deezer.com/artist/10091060', 'https://www.deezer.com/artist/14081395', 'https://www.deezer.com/artist/61659702')
 
 		for i, link in enumerate(links):
 			link_dee = self.__API.conv_spo_artist_2_dee_artist(link)
